@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QuizPulse Studio — Done-For-You Faceless & Quiz Shorts</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B0F19'/%3E%3Crect x='3' y='3' width='58' height='58' rx='14' fill='none' stroke='%2310B981' stroke-width='4'/%3E%3Cpolygon points='26,19 26,45 47,32' fill='%2310B981'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F19; --bg2:#111827; --card:rgba(17,24,39,.82); --border:rgba(148,163,184,.16);
+    --accent:#10B981; --accent2:#059669; --gold:#F59E0B; --text:#F8FAFC; --muted:#94A3B8;
+  }
+  *{box-sizing:border-box;scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;overflow-x:hidden}
+  .bg-fx{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:radial-gradient(circle at 15% 10%,rgba(16,185,129,.12),transparent 36%),
+                     radial-gradient(circle at 85% 25%,rgba(56,189,248,.08),transparent 38%),
+                     linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:100% 100%,100% 100%,56px 56px,56px 56px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  /* Navbar */
+  .nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);background:rgba(11,15,25,.84);border-bottom:1px solid var(--border)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:1180px;margin:0 auto;gap:14px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:20px;color:#fff;text-decoration:none}
+  .brand-mark{width:34px;height:34px;border-radius:10px;background:rgba(16,185,129,.14);border:1.5px solid var(--accent);display:grid;place-items:center;color:var(--accent);font-size:15px}
+  .nav-links{display:flex;gap:26px;align-items:center}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;transition:.2s}
+  .nav-links a:hover{color:#fff}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:12px;padding:12px 22px;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;transition:.2s}
+  .btn-primary{background:var(--accent);color:#04160f;box-shadow:0 8px 26px rgba(16,185,129,.26)}
+  .btn-primary:hover{background:#34D399;transform:translateY(-1px)}
+  .btn-ghost{background:rgba(255,255,255,.06);color:#fff;border:1px solid var(--border)}
+  .btn-ghost:hover{background:rgba(255,255,255,.12)}
+
+  section{padding:76px 0}
+  .center{text-align:center}
+  .tag{display:inline-block;padding:6px 14px;border-radius:99px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:14px}
+  .sec-h{font-family:'Space Grotesk',sans-serif;font-size:40px;line-height:1.12;margin:0 0 12px;letter-spacing:-.02em}
+  .sec-p{color:var(--muted);font-size:17px;max-width:640px;margin:0 auto 40px;line-height:1.6}
+
+  /* Hero */
+  .hero{padding:80px 0 64px;text-align:center;max-width:860px;margin:0 auto}
+  .hero h1{font-family:'Space Grotesk',sans-serif;font-size:56px;line-height:1.06;margin:0 0 18px;letter-spacing:-.03em}
+  .hero h1 span{color:var(--accent)}
+  .hero p{color:var(--muted);font-size:19px;line-height:1.65;max-width:680px;margin:0 auto 30px}
+  .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  /* Portfolio Filter & 9:16 Grid */
+  .filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+  .ftab{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border);padding:9px 18px;border-radius:99px;font-weight:600;font-size:13px;cursor:pointer;transition:.2s}
+  .ftab.act,.ftab:hover{background:var(--accent);color:#04160f;border-color:var(--accent);font-weight:700}
+  .port-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .pcard{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:12px;transition:.25s}
+  .pcard:hover{border-color:rgba(16,185,129,.45);transform:translateY(-3px)}
+  .pcard.hide{display:none}
+  .phone-box{position:relative;aspect-ratio:9/16;border-radius:16px;overflow:hidden;background:#070a12;border:1px solid rgba(255,255,255,.08);cursor:pointer}
+  .phone-box video{width:100%;height:100%;object-fit:cover;display:block}
+  .play-ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,15,25,.25),rgba(11,15,25,.7));display:flex;flex-direction:column;align-items:center;justify-content:center;transition:.2s}
+  .phone-box.playing .play-ov{opacity:0;pointer-events:none}
+  .play-btn{width:62px;height:62px;border-radius:50%;background:var(--accent);color:#04160f;display:grid;place-items:center;font-size:22px;box-shadow:0 0 28px rgba(16,185,129,.55)}
+  .p-meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:0 4px 4px;gap:8px}
+  .cat-tag{font-size:12px;font-weight:700;color:#fff}
+  .len-badge{font-size:11px;font-weight:700;color:var(--accent);background:rgba(16,185,129,.12);padding:4px 9px;border-radius:99px;white-space:nowrap}
+
+  /* Guarantee Strip & Process */
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .glass{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:26px;text-align:left}
+  .ico{width:44px;height:44px;border-radius:12px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);display:grid;place-items:center;font-size:20px;margin-bottom:14px;color:var(--accent)}
+  .glass h3{margin:0 0 8px;font-size:18px}
+  .glass p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+  .step-n{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:800;color:var(--accent);margin-bottom:8px}
+
+  /* Pricing */
+  .plan{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;position:relative}
+  .plan.pop{border:2px solid var(--accent);box-shadow:0 0 42px rgba(16,185,129,.15)}
+  .pop-pill{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--accent);color:#04160f;font-size:11px;font-weight:800;padding:5px 14px;border-radius:99px;letter-spacing:.05em}
+  .price{font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:800;margin:8px 0 6px}
+  .price span{font-size:14px;color:var(--muted);font-weight:600}
+  .plan ul{list-style:none;padding:0;margin:16px 0 24px;display:grid;gap:10px;font-size:14px;color:#cbd5e1}
+  .plan li::before{content:"✓ ";color:var(--accent);font-weight:900}
+
+  .offer-banner{margin-top:30px;background:linear-gradient(135deg,rgba(16,185,129,.14),rgba(17,24,39,.92));border:1.5px solid rgba(16,185,129,.45);border-radius:22px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;text-align:left}
+
+  /* FAQ */
+  .faq-list{max-width:780px;margin:0 auto;display:grid;gap:12px}
+  .faq{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;text-align:left}
+  .faq-q{width:100%;background:none;border:none;color:#fff;padding:18px 22px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;text-align:left}
+  .faq-a{display:none;padding:0 22px 18px;color:var(--muted);font-size:14px;line-height:1.65}
+  .faq.open .faq-a{display:block}
+
+  /* Contact Footer */
+  .book-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:36px}
+  label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:10px 0 5px;text-transform:uppercase;letter-spacing:.04em}
+  input,select,textarea{width:100%;padding:12px 14px;border-radius:11px;border:1px solid #2b3754;background:#0B0F19;color:#fff;font-size:14px;font-family:inherit;outline:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  .wa-btn{background:#25D366;color:#04160b}
+  .wa-btn:hover{background:#34e676}
+
+  .float-wa{position:fixed;bottom:20px;right:20px;z-index:60;background:#25D366;color:#04160b;padding:13px 18px;border-radius:99px;font-weight:800;font-size:14px;text-decoration:none;box-shadow:0 10px 28px rgba(37,211,102,.35)}
+  footer{border-top:1px solid var(--border);padding:28px 0;color:var(--muted);font-size:13px;text-align:center}
+
+  @media(max-width:980px){
+    .port-grid,.g4{grid-template-columns:repeat(2,1fr)}
+    .g3,.book-grid{grid-template-columns:1fr}
+    .hero h1{font-size:38px}
+    .nav-links{display:none}
+  }
+  @media(max-width:540px){
+    .port-grid,.g4{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="bg-fx"></div>
+
+<!-- NAVBAR -->
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#">
+      <div class="brand-mark">▶</div>
+      <span>QuizPulse <span style="color:var(--accent)">Studio</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#portfolio">Portfolio</a>
+      <a href="#process">How It Works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="btn btn-primary" href="#book" onclick="selectPkg('$35 Custom Test Video')">Get $35 Test Video</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="wrap">
+  <div class="hero">
+    <div class="tag">Faceless & Quiz Short-Form Production</div>
+    <h1>Done-For-You <span>Faceless & Quiz</span> Shorts.</h1>
+    <p>We research, script, voiceover, and edit high-retention 9:16 videos for YouTube Shorts, Reels, and TikTok—100% original and monetization-safe.</p>
+    <div class="hero-btns">
+      <a class="btn btn-primary" style="padding:15px 28px;font-size:16px" href="#book" onclick="selectPkg('$35 Custom Test Video')">Get a Test Video for $35 →</a>
+      <a class="btn btn-ghost" style="padding:15px 26px;font-size:16px" href="#pricing">View Pricing</a>
+    </div>
+  </div>
+</div>
+
+<!-- PORTFOLIO GRID -->
+<section id="portfolio" style="padding-top:20px">
+  <div class="wrap center">
+    <div class="tag">Sample Reels</div>
+    <h2 class="sec-h">Watch Our Real 9:16 Quiz & Fact Shorts</h2>
+    <p class="sec-p">Tap any phone below to play with full sound—zero stock templates, built for watch-time and comment engagement.</p>
+
+    <div class="filters">
+      <button class="ftab act" onclick="filterPort('all',this)">All Formats</button>
+      <button class="ftab" onclick="filterPort('riddles',this)">3-Riddle Countdown</button>
+      <button class="ftab" onclick="filterPort('trivia',this)">Rapid-Fire Trivia</button>
+      <button class="ftab" onclick="filterPort('wyr',this)">Would You Rather</button>
+      <button class="ftab" onclick="filterPort('psychology',this)">Psychology Facts</button>
+    </div>
+
+    <div class="port-grid">
+      <div class="pcard" data-cat="riddles">
+        <div class="phone-box" onclick="toggleVid(this)">
+          <video src="videos/riddles.mp4" playsinline preload="metadata"></video>
+          <div class="play-ov"><div class="play-btn">▶</div></div>
+        </div>
+        <div class="p-meta"><span class="cat-tag">3-Riddle Countdown</span><span class="len-badge">Style Demo</span></div>
+      </div>
+
+      <div class="pcard" data-cat="trivia">
+        <div class="phone-box" onclick="toggleVid(this)">
+          <video src="videos/trivia.mp4" playsinline preload="metadata"></video>
+          <div class="play-ov"><div class="play-btn">▶</div></div>
+        </div>
+        <div class="p-meta"><span class="cat-tag">Rapid-Fire Trivia</span><span class="len-badge">5/5 Quiz</span></div>
+      </div>
+
+      <div class="pcard" data-cat="wyr">
+        <div class="phone-box" onclick="toggleVid(this)">
+          <video src="videos/wyr.mp4" playsinline preload="metadata"></video>
+          <div class="play-ov"><div class="play-btn">▶</div></div>
+        </div>
+        <div class="p-meta"><span class="cat-tag">Would You Rather</span><span class="len-badge">Poll Reveal</span></div>
+      </div>
+
+      <div class="pcard" data-cat="psychology">
+        <div class="phone-box" onclick="toggleVid(this)">
+          <video src="videos/psychology.mp4" playsinline preload="metadata"></video>
+          <div class="play-ov"><div class="play-btn">▶</div></div>
+        </div>
+        <div class="p-meta"><span class="cat-tag">Psychology Facts</span><span class="len-badge">Deep Facts</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MONETIZATION-SAFE GUARANTEE STRIP -->
+<section style="padding:20px 0 40px">
+  <div class="wrap">
+    <div class="g3">
+      <div class="glass">
+        <div class="ico">✍️</div>
+        <h3>100% Original Scripts</h3>
+        <p>Every riddle, trivia question, and fact hook is freshly researched and written for your niche—never recycled spam.</p>
+      </div>
+      <div class="glass">
+        <div class="ico">🎵</div>
+        <h3>Copyright-Free Music & SFX</h3>
+        <p>Cleared background beats, crisp clock tick-tocks, and clean sound effects safe for YouTube Partner Program monetization.</p>
+      </div>
+      <div class="glass">
+        <div class="ico">🛡️</div>
+        <h3>Full Commercial Ownership</h3>
+        <p>You own 100% of every delivered MP4 video forever—post freely on YouTube Shorts, Instagram Reels, and TikTok.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4-STEP HANDS-OFF PROCESS -->
+<section id="process">
+  <div class="wrap center">
+    <div class="tag">Zero Effort Workflow</div>
+    <h2 class="sec-h">Our 4-Step Hands-Off Process</h2>
+    <p class="sec-p">Tell us your niche and branding once—we handle the entire creative pipeline every week.</p>
+    <div class="g4">
+      <div class="glass"><div class="step-n">STEP 01</div><h3>Niche & Topic Research</h3><p>We map out viral quiz, riddle, or fact angles tailored to what your target audience already searches and shares.</p></div>
+      <div class="glass"><div class="step-n">STEP 02</div><h3>Retention Scripting & Hooks</h3><p>Short 2-second curiosity hooks, tight countdown pacing, and comment-bait reveals designed to boost replays.</p></div>
+      <div class="glass"><div class="step-n">STEP 03</div><h3>Voiceover & 9:16 Editing</h3><p>Crisp narration, safe-zone captions, ticking timers, and balanced music delivered in sharp 1080×1920 HD.</p></div>
+      <div class="glass"><div class="step-n">STEP 04</div><h3>Delivery or Auto-Scheduling</h3><p>Receive organized Google Drive folders with SEO titles & tags—or let us schedule directly to your channel.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap center">
+    <div class="tag">Monthly Retainers</div>
+    <h2 class="sec-h">Simple, Scalable Production Plans</h2>
+    <p class="sec-p">Consistent posting builds algorithmic momentum. Pick your posting pace and cancel anytime.</p>
+
+    <div class="g3">
+      <div class="plan">
+        <div>
+          <h3 style="margin:0;color:var(--muted)">STARTER</h3>
+          <div class="price">$399 <span>/ mo</span></div>
+          <div style="color:var(--accent);font-weight:700;font-size:14px">15 Shorts / month</div>
+          <ul>
+            <li>100% original scripts</li>
+            <li>Neural AI voiceover</li>
+            <li>9:16 edit + SFX + captions</li>
+            <li>1 revision round per batch</li>
+            <li>48-hour turnaround</li>
+          </ul>
+        </div>
+        <a class="btn btn-ghost" style="width:100%" href="#book" onclick="selectPkg('Starter ($399/mo)')">Choose Starter</a>
+      </div>
+
+      <div class="plan pop">
+        <div class="pop-pill">MOST POPULAR</div>
+        <div>
+          <h3 style="margin:0;color:var(--accent)">GROWTH</h3>
+          <div class="price">$749 <span>/ mo</span></div>
+          <div style="color:var(--accent);font-weight:700;font-size:14px">30 Shorts / month (Daily)</div>
+          <ul>
+            <li>Everything in Starter</li>
+            <li>Viral hook variations</li>
+            <li>Custom motion graphics</li>
+            <li>SEO YouTube titles & tags</li>
+            <li>2 revisions • 24–48 hr turnaround</li>
+          </ul>
+        </div>
+        <a class="btn btn-primary" style="width:100%" href="#book" onclick="selectPkg('Growth ($749/mo)')">Choose Growth</a>
+      </div>
+
+      <div class="plan">
+        <div>
+          <h3 style="margin:0;color:var(--gold)">FULL AUTOMATION</h3>
+          <div class="price">$1,399 <span>/ mo</span></div>
+          <div style="color:var(--gold);font-weight:700;font-size:14px">60 Shorts / month (2x Daily)</div>
+          <ul>
+            <li>Everything in Growth</li>
+            <li>A/B hook testing</li>
+            <li>Premium AI or human voiceover</li>
+            <li>Full YouTube / IG / TikTok scheduling</li>
+            <li>Priority 24-hour turnaround</li>
+          </ul>
+        </div>
+        <a class="btn btn-ghost" style="width:100%" href="#book" onclick="selectPkg('Full Automation ($1,399/mo)')">Choose Full Automation</a>
+      </div>
+    </div>
+
+    <!-- $35 TEST VIDEO ENTRY OFFER -->
+    <div class="offer-banner">
+      <div>
+        <div class="tag" style="margin-bottom:8px">Low-Risk Entry Offer</div>
+        <h3 style="margin:0 0 6px;font-family:'Space Grotesk',sans-serif;font-size:26px">Try 1 Custom Quiz Short for Just $35</h3>
+        <p style="margin:0;color:var(--muted);font-size:15px">Delivered in 48 hours tailored to your channel's branding—and <b>100% credited toward your first month</b> if you upgrade.</p>
+      </div>
+      <a class="btn btn-primary" id="testOfferBtn" style="padding:15px 26px;font-size:15px;white-space:nowrap" href="#book" onclick="selectPkg('$35 Custom Test Video')">Order $35 Test Video →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="padding-top:20px">
+  <div class="wrap center">
+    <div class="tag">FAQ</div>
+    <h2 class="sec-h">Common Questions</h2>
+    <div class="faq-list" style="margin-top:28px">
+      <div class="faq"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How fast is turnaround time? <span>+</span></button><div class="faq-a">Starter orders deliver within 48 hours, Growth delivers in 24–48 hours, and Full Automation receives priority 24-hour turnaround. Your $35 Test Video is delivered within 48 hours.</div></div>
+      <div class="faq"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Are these videos 100% monetization-safe? <span>+</span></button><div class="faq-a">Yes. We never use copyrighted movie clips, sports broadcasts, or claimed music. All scripts, animations, sound effects, and background tracks are 100% original and monetization-safe.</div></div>
+      <div class="faq"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do you use AI or human voiceovers? <span>+</span></button><div class="faq-a">Starter and Growth use studio-grade neural voiceovers (US or UK accents, custom-tuned for quiz pacing). Full Automation includes your choice of premium AI or real human voiceover.</div></div>
+      <div class="faq"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How do revisions work? <span>+</span></button><div class="faq-a">Starter includes 1 revision round per batch and Growth/Full Automation include 2 rounds—covering text tweaks, pacing adjustments, or voice/music swaps.</div></div>
+      <div class="faq"><button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can you match my existing channel's colors, fonts, and @handle? <span>+</span></button><div class="faq-a">Yes! Send us your channel link, brand colors, and @handle when booking. We match your visual identity so every Short looks native to your brand.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING / CONTACT -->
+<section id="book" style="padding-top:20px">
+  <div class="wrap">
+    <div class="book-grid">
+      <div>
+        <div class="tag">Book Your Slot</div>
+        <h2 class="sec-h" style="font-size:34px">Ready to Scale Your Short-Form Channel?</h2>
+        <p style="color:var(--muted);line-height:1.65;margin:0 0 22px">Fill out the form with your channel link and target niche—or message us directly on WhatsApp to order your <b>$35 Test Video</b> today.</p>
+        <a class="btn wa-btn" id="waDirect" target="_blank" href="#" style="padding:14px 24px;font-size:15px">💬 Chat on WhatsApp Now</a>
+      </div>
+
+      <form id="leadForm" onsubmit="submitLead(event)">
+        <label>Your Name</label>
+        <input id="fName" required placeholder="John Doe">
+        <label>Email Address</label>
+        <input id="fEmail" type="email" required placeholder="you@channel.com">
+        <label>YouTube / TikTok / IG Channel Link</label>
+        <input id="fChan" placeholder="https://youtube.com/@yourchannel">
+        <label>Package Interest</label>
+        <select id="fPkg">
+          <option>$35 Custom Test Video</option>
+          <option>Starter ($399/mo)</option>
+          <option>Growth ($749/mo)</option>
+          <option>Full Automation ($1,399/mo)</option>
+        </select>
+        <button class="btn btn-primary" style="width:100%;margin-top:14px;padding:14px;font-size:15px" id="subBtn" type="submit">Request Video / Book Call →</button>
+        <div id="formMsg" style="margin-top:10px;font-size:13px;color:var(--accent);text-align:center"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">© 2026 <b>QuizPulse Studio</b> • Done-For-You Faceless & Quiz Shorts Production</div>
+</footer>
+
+<a class="float-wa" id="waFloat" target="_blank" href="#">💬 WhatsApp Us</a>
+
+<script>
+// 👇 EDIT THESE 2 LINES WITH YOUR REAL DETAILS:
+const WHATSAPP_NUMBER = "923000000000";   // Your WhatsApp number with country code (no + or spaces)
+const FORMSPREE_URL   = "";               // Optional: paste https://formspree.io/f/xxxxxx here later
+
+const waBase = `https://wa.me/${WHATSAPP_NUMBER}?text=` + encodeURIComponent("Hi! I'm interested in your DFY Quiz Shorts / $35 Test Video.");
+document.getElementById("waDirect").href = waBase;
+document.getElementById("waFloat").href  = waBase;
+
+function selectPkg(name){
+  document.getElementById("fPkg").value = name;
+}
+
+function filterPort(cat, btn){
+  document.querySelectorAll(".ftab").forEach(b => b.classList.remove("act"));
+  btn.classList.add("act");
+  document.querySelectorAll(".pcard").forEach(c => {
+    c.classList.toggle("hide", cat !== "all" && c.dataset.cat !== cat);
+  });
+}
+
+function toggleVid(box){
+  const vid = box.querySelector("video");
+  document.querySelectorAll(".phone-box").forEach(b => {
+    if(b !== box){
+      const v = b.querySelector("video");
+      v.pause();
+      b.classList.remove("playing");
+    }
+  });
+  if(vid.paused){
+    vid.play().then(()=> box.classList.add("playing")).catch(()=>{});
+  }else{
+    vid.pause();
+    box.classList.remove("playing");
+  }
+  vid.onended = () => box.classList.remove("playing");
+}
+
+async function submitLead(e){
+  e.preventDefault();
+  const msg = document.getElementById("formMsg");
+  const data = {
+    name: fName.value, email: fEmail.value, channel: fChan.value, package: fPkg.value
+  };
+  if(FORMSPREE_URL){
+    subBtn.disabled = true; msg.textContent = "Sending inquiry...";
+    try{
+      const r = await fetch(FORMSPREE_URL, {method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"}, body:JSON.stringify(data)});
+      if(!r.ok) throw new Error();
+      msg.textContent = "Inquiry sent! We'll reply within a few hours.";
+      leadForm.reset();
+    }catch{ msg.textContent = "Could not send — please message us on WhatsApp!"; }
+    subBtn.disabled = false;
+  }else{
+    const txt = `Hi! Name: ${data.name} | Email: ${data.email} | Channel: ${data.channel || 'New'} | Package: ${data.package}`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(txt)}`, "_blank");
+    msg.textContent = "Opening WhatsApp with your details!";
+  }
+}
+</script>
+</body>
+</html>
